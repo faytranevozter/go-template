@@ -11,7 +11,7 @@ RUN go mod download
 COPY . .
 
 # build a fully standalone binary with zero dependencies
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags '-extldflags "-static"' -o build-app main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags '-extldflags "-static"' -o build-app app/main.go
 
 # final image
 FROM alpine
