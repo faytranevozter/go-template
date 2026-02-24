@@ -11,7 +11,12 @@ import (
 	"go.mongodb.org/mongo-driver/x/mongo/driver/connstring"
 )
 
-func ConnectMongoDB(timeout time.Duration, URI, dbName string) *mongo.Database {
+// NewMongoDB connects to MongoDB database using the official MongoDB Go driver and returns the database instance.
+// It takes a timeout duration, a MongoDB URI, and a database name as parameters.
+// The MongoDB URI should be in the format: mongodb://username:password@host:port/database?query_params
+//
+// Example: mongodb://user:password@localhost:27017/go-template?ssl=false
+func NewMongoDB(timeout time.Duration, URI, dbName string) *mongo.Database {
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 

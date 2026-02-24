@@ -18,7 +18,6 @@ import (
 	"github.com/redis/go-redis/v9"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/natefinch/lumberjack.v2"
-	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
@@ -78,23 +77,18 @@ func main() {
 	// set gin writer to logrus
 	gin.DefaultWriter = logrus.StandardLogger().Writer()
 
-	// init mongo database
-	dbConn := connection.ConnectMysql(timeoutContext, os.Getenv("DB_URL"))
-
 	// init redis database
 	var redisClient *redis.Client
 	if useRedis, err := strconv.ParseBool(os.Getenv("USE_REDIS")); err == nil && useRedis {
-		redisClient = connection.ConnectRedis(timeoutContext, os.Getenv("REDIS_URL"))
+		redisClient = connection.NewRedis(timeoutContext, os.Getenv("REDIS_URL"))
 	}
 
 	// Initialize GORM repository with custom logger
 	gormDB, err := gorm.Open(
-		mysql.New(mysql.Config{
-			Conn: dbConn,
-		}),
-		// postgres.New(postgres.Config{
-		// 	Conn: dbConn,
-		// }),
+		connection.NewMysqlGORM(timeoutContext, os.Getenv("DB_URL")), // for mysql
+		// connection.NewPostgresGORM(timeoutContext, os.Getenv("DB_URL")), // for postgres
+		// connection.NewSQLiteGORM(timeoutContext, os.Getenv("DB_URL")), // for sqlite
+		// connection.NewSQLServerGORM(timeoutContext, os.Getenv("DB_URL")), // for sql server
 		&gorm.Config{
 			Logger: logger.New(
 				// logrus.StandardLogger(),
