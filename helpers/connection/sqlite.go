@@ -13,7 +13,10 @@ import (
 // It takes a timeout duration and a database URL as parameters.
 // The database URL should be in the format: file:path/to/database.db?query_params
 //
-// Example: file:./data/database.db?cache=shared&mode=rwc
+// Example:
+//
+//	NewSQLite(timeout, "database.db?cache=shared&mode=rwc")
+//	NewSQLite(timeout, "file::memory:?cache=shared")
 func NewSQLite(timeout time.Duration, dbURL string) *sqlx.DB {
 	_, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
@@ -40,12 +43,13 @@ func NewSQLite(timeout time.Duration, dbURL string) *sqlx.DB {
 // Example usage in main.go:
 //
 //	  gormDB, err := gorm.Open(
-//		  connection.NewSQLiteGORM(timeoutContext, "file:./data/database.db?cache=shared&mode=rwc"),
+//		  connection.NewSQLiteGORM(timeoutContext, "database.db?cache=shared&mode=rwc"),
+//		  // connection.NewSQLiteGORM(timeoutContext, "file::memory:?cache=shared"),
 //		  &gorm.Config{...},
 //	  )
 func NewSQLiteGORM(timeout time.Duration, dbURL string) gorm.Dialector {
 	db := NewSQLite(timeout, dbURL)
 	return sqlite.New(sqlite.Config{
-		Conn: db.DB,
+		Conn: db,
 	})
 }
