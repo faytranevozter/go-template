@@ -8,9 +8,16 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
-func ConnectMysql(timeout time.Duration, dbURL string) *sqlx.DB {
+// NewMysql connects to MySQL database using sqlx and returns the connection.
+// It takes a timeout duration and a database URL as parameters.
+// The database URL should be in the format: mysql://username:password@host:port/database?query_params
+//
+// Example: mysql://root:password@localhost:3306/go-template?charset=utf8mb4&parseTime=True&loc=Local
+func NewMysql(timeout time.Duration, dbURL string) *sqlx.DB {
 	_, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 
@@ -50,4 +57,20 @@ func ConnectMysql(timeout time.Duration, dbURL string) *sqlx.DB {
 	}
 
 	return db
+}
+
+// NewMysqlGORM returns a GORM dialector for MySQL using the provided timeout and database URL.
+// It uses the NewMysql function to establish the connection and then creates a GORM dialector with it.
+//
+// Example usage in main.go:
+//
+//	  gormDB, err := gorm.Open(
+//		  connection.NewMysqlGORM(timeoutContext, "mysql://root:password@localhost:3306/go-template?charset=utf8mb4&parseTime=True&loc=Local"),
+//		  &gorm.Config{...},
+//	  )
+func NewMysqlGORM(timeout time.Duration, dbURL string) gorm.Dialector {
+	db := NewMysql(timeout, dbURL)
+	return mysql.New(mysql.Config{
+		Conn: db,
+	})
 }

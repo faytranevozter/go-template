@@ -5,7 +5,7 @@ test:
 	@go test -v -cover -covermode=atomic ./...
 
 testcoverage:
-	go test -v -cover -covermode=atomic ./... --coverprofile=coverage.out ./... && \
+	@go test -v -cover -covermode=atomic -coverprofile=coverage.out ./... && \
 	go tool cover -func=coverage.out
 
 generate-mocks:
