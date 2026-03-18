@@ -1,5 +1,9 @@
 # Golang API Boilerplate Template
 
+[![Go](https://img.shields.io/badge/Go-1.25+-00ADD8?style=flat&logo=go&logoColor=white)](https://golang.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Go Report Card](https://goreportcard.com/badge/github.com/faytranevozter/go-template)](https://goreportcard.com/report/github.com/faytranevozter/go-template)
+
 > A production-ready boilerplate for building RESTful APIs with Clean Architecture in Go
 
 ## 🎯 Overview
@@ -10,203 +14,389 @@ The architecture is inspired by [go-clean-arch](https://github.com/bxcodec/go-cl
 
 ## ✨ Features
 
-- 🏗️ **Clean Architecture** - Separation of concerns with clear boundaries between layers
-- 🔐 **JWT Authentication** - Built-in JWT token generation and validation
-- 🗄️ **Multiple Database Support** - MySQL, PostgreSQL, SQLite, and MongoDB
-- 💾 **Redis Caching** - Integrated caching layer with middleware
-- ☁️ **AWS S3 Integration** - File storage and upload support
-- 🚀 **RESTful API** - Built with Gin framework for high performance
-- 📝 **Structured Logging** - Request/response logging with Logrus
-- 🔄 **CORS Support** - Configurable cross-origin resource sharing
-- 🛡️ **Middleware Suite** - Auth, cache, CORS, logger, and recovery
-- 🐳 **Docker Ready** - Dockerfile included for containerization
+- 🏗️ **Clean Architecture** — Separation of concerns with clear boundaries between layers
+- 🔐 **JWT Authentication** — Built-in JWT token generation and validation
+- 🗄️ **Multiple Database Support** — MySQL, PostgreSQL, SQLite, SQL Server, and MongoDB
+- 💾 **Redis Caching** — Integrated caching layer with middleware
+- ☁️ **AWS S3 Integration** — File storage and upload support
+- 🚀 **RESTful API** — Built with [Gin](https://github.com/gin-gonic/gin) framework for high performance
+- 📝 **Structured Logging** — Request/response logging with [Logrus](https://github.com/sirupsen/logrus) and log rotation
+- 🔄 **CORS Support** — Configurable cross-origin resource sharing
+- 🛡️ **Middleware Suite** — Auth, cache, CORS, logger, and recovery
+- 🐳 **Docker & Compose** — Dockerfile and Docker Compose for easy containerization
+- 📊 **Data Export** — Export data to Excel with built-in support
 
 ## 📋 Tech Stack
 
-### Core
-- **Go** 1.25+
-- **[Gin](https://github.com/gin-gonic/gin)** - HTTP web framework
-- **[Logrus](https://github.com/sirupsen/logrus)** - Structured logger
+| Category | Technology |
+|----------|-----------|
+| **Language** | [Go](https://golang.org/) 1.25+ |
+| **Web Framework** | [Gin](https://github.com/gin-gonic/gin) |
+| **ORM** | [GORM](https://gorm.io/) |
+| **SQL Databases** | MySQL, PostgreSQL, SQLite, SQL Server |
+| **NoSQL Database** | [MongoDB](https://www.mongodb.com/) 6.0+ |
+| **Cache** | [Redis](https://redis.io/) |
+| **Authentication** | [JWT](https://jwt.io/) via [golang-jwt](https://github.com/golang-jwt/jwt) |
+| **Cloud Storage** | [AWS S3](https://aws.amazon.com/s3/) |
+| **Logging** | [Logrus](https://github.com/sirupsen/logrus) + [Lumberjack](https://github.com/natefinsh/lumberjack) |
 
-### Databases
-- **[MongoDB](https://www.mongodb.com/)** 6.0+ - NoSQL database
-- **[MySQL](https://www.mysql.com/)** - Relational database
-- **[PostgreSQL](https://www.postgresql.org/)** - Advanced relational database
-- **[SQLite](https://www.sqlite.org/)** - Embedded database
-- **[GORM](https://gorm.io/)** - ORM library
+## 📐 Architecture
 
-### Infrastructure
-- **[Redis](https://redis.io/)** - In-memory cache
-- **[AWS S3](https://aws.amazon.com/s3/)** - Cloud storage
-- **[JWT](https://jwt.io/)** - Token-based authentication
+This project follows **Clean Architecture** principles. Each layer has clear responsibilities and dependencies only point inward:
+
+```
+┌──────────────────────────────────────────────────┐
+│                 Frameworks & Drivers              │
+│  (Gin, GORM, MongoDB Driver, Redis, AWS SDK)      │
+├──────────────────────────────────────────────────┤
+│              Interface Adapters                   │
+│  (REST Handlers, Middleware, Repositories)         │
+├──────────────────────────────────────────────────┤
+│              Application Business Rules           │
+│  (Services / Use Cases)                           │
+├──────────────────────────────────────────────────┤
+│              Enterprise Business Rules            │
+│  (Domain Entities, Interfaces)                    │
+└──────────────────────────────────────────────────┘
+```
 
 ## 📁 Project Structure
 
 ```
 .
-├── app/                    # Application entry point
-│   └── main.go
-├── domain/                 # Business entities and interfaces
-│   ├── article.go
-│   ├── user.go
-│   ├── error.go
-│   └── model/             # Data models and DTOs
-├── helpers/               # Utility functions and helpers
-│   ├── connection/        # Database connections
-│   ├── jsonwebtoken/      # JWT utilities
-│   ├── common.go
-│   └── pagination.go
-├── internal/              # Private application code
-│   ├── repository/        # Data access layer
-│   │   ├── gorm/         # SQL repositories
-│   │   ├── mongo/        # MongoDB repositories
-│   │   ├── redis/        # Cache repositories
-│   │   └── s3/           # Storage repositories
-│   ├── rest/             # HTTP handlers
-│   │   └── middleware/   # HTTP middlewares
-│   └── worker/           # Background workers
-├── user/                 # User module (example)
-│   ├── service.go        # Business logic
-│   ├── storage.go        # Storage interface
-│   └── cache.go          # Cache layer
-├── Dockerfile            # Docker configuration
-├── Makefile             # Build automation
-└── go.mod               # Go dependencies
+├── app/                        # Application entry point
+│   └── main.go                 #   Bootstrap and wire up dependencies
+├── domain/                     # Enterprise Business Rules (entities & interfaces)
+│   ├── user.go                 #   User entity and repository interface
+│   ├── article.go              #   Article entity (MongoDB example)
+│   ├── error.go                #   Error code definitions
+│   └── model/                  #   Data transfer objects (DTOs)
+│       ├── auth/               #     JWT claim structures
+│       ├── request/            #     Request payloads
+│       ├── response/           #     Response structures
+│       ├── filter.go           #     Query filter models
+│       ├── gorm/               #     GORM query helpers
+│       ├── mongo/              #     MongoDB query helpers
+│       └── storage/            #     Storage response models
+├── helpers/                    # Shared utility functions
+│   ├── common.go               #   General helpers (JSON, email validation)
+│   ├── pagination.go           #   Pagination helpers (limit/offset)
+│   ├── connection/             #   Database connection factories
+│   │   ├── mysql.go            #     MySQL connection
+│   │   ├── postgres.go         #     PostgreSQL connection
+│   │   ├── sqlite.go           #     SQLite connection
+│   │   ├── sqlserver.go        #     SQL Server connection
+│   │   ├── mongodb.go          #     MongoDB connection
+│   │   └── redis.go            #     Redis connection
+│   └── jsonwebtoken/           #   JWT utilities
+│       ├── init.go             #     JWT initialization
+│       └── secret.go           #     Secret key management
+├── internal/                   # Private application code
+│   ├── repository/             #   Data access layer implementations
+│   │   ├── gorm/               #     SQL repositories (via GORM)
+│   │   ├── mongo/              #     MongoDB repositories
+│   │   ├── redis/              #     Redis cache operations
+│   │   └── s3/                 #     AWS S3 file storage
+│   ├── rest/                   #   HTTP transport layer
+│   │   ├── user.go             #     User route handlers
+│   │   └── middleware/         #     HTTP middlewares
+│   │       ├── auth.go         #       JWT authentication
+│   │       ├── cache.go        #       Redis response caching
+│   │       ├── cors.go         #       CORS configuration
+│   │       ├── logger.go       #       Request/response logging
+│   │       └── recovery.go     #       Panic recovery
+│   └── worker/                 #   Background workers / consumers
+├── user/                       # User module (example use case)
+│   ├── service.go              #   Business logic / use cases
+│   ├── storage.go              #   Storage interface definition
+│   └── cache.go                #   Cache interface definition
+├── docker-compose.yml          # Docker Compose for local development
+├── Dockerfile                  # Multi-stage Docker build
+├── Makefile                    # Build automation commands
+├── .env.example                # Environment variable template
+└── go.mod                      # Go module dependencies
 ```
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
-- Go 1.25 or higher
-- One or more databases (MySQL/PostgreSQL/MongoDB/SQLite)
-- Redis (optional, for caching)
-- AWS S3 credentials (optional, for file storage)
+- [Go](https://golang.org/dl/) 1.25 or higher
+- [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/) (for containerized setup)
+- Or manually install: MySQL/PostgreSQL/SQLite + Redis (optional) + AWS S3 credentials (optional)
 
-### Installation
+### Quick Start with Docker Compose
+
+The fastest way to get the full stack running locally:
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/faytranevozter/go-template.git
+cd go-template
+
+# 2. Copy and configure environment variables
+cp .env.example .env
+
+# 3. Start all services (app + MySQL + Redis)
+docker compose up -d
+
+# 4. Verify the app is running
+curl http://localhost:5050/
+# {"message":"It works"}
+```
+
+To stop all services:
+```bash
+docker compose down
+```
+
+To stop and remove all data volumes:
+```bash
+docker compose down -v
+```
+
+### Manual Setup (without Docker)
 
 1. **Clone this repository**
    ```bash
-   git clone <repository-url>
-   cd <project-directory>
+   git clone https://github.com/faytranevozter/go-template.git
+   cd go-template
    ```
 
 2. **Set up environment variables**
    ```bash
    cp .env.example .env
    ```
-   
+
 3. **Configure your `.env` file**
-   
-   Edit the `.env` file with your database credentials, Redis configuration, AWS credentials, and other settings.
+
+   Edit the `.env` file with your database credentials, Redis configuration, AWS credentials, and other settings. See [Environment Variables](#-environment-variables) for details.
 
 4. **Run the application**
    ```bash
    make run
    ```
-   
+
    Or using Go directly:
    ```bash
    go run app/main.go
    ```
 
-The application will download all dependencies automatically and start the server.
+The application will download all dependencies automatically and start the server on port `5050`.
 
 ## 🛠️ Available Commands
 
-### Development
-```bash
-make run              # Run the application
-make test             # Run all tests with coverage
-make testcoverage     # Run tests and generate coverage report
-make generate-mocks   # Generate mock files for testing
+| Command | Description |
+|---------|-------------|
+| `make run` | Run the application |
+| `make build` | Build optimized binary (output: `build-app`) |
+| `make test` | Run all tests with coverage |
+| `make testcoverage` | Run tests and generate coverage report |
+| `make generate-mocks` | Generate mock files for testing |
+
+## 🌐 API Endpoints
+
+### Public Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/` | Health check |
+| `POST` | `/auth/login` | User login |
+| `POST` | `/auth/register` | User registration |
+
+### Protected Endpoints (require JWT Bearer token)
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/auth/me` | Get current authenticated user |
+| `GET` | `/sample/user/list` | List users (supports pagination & filters) |
+| `GET` | `/sample/user/detail/:id` | Get user by ID |
+| `GET` | `/sample/user/export` | Export users to Excel |
+
+### Authentication
+
+Include the JWT token in the `Authorization` header:
+
+```
+Authorization: Bearer <your-jwt-token>
 ```
 
-### Build
+**Login example:**
+
 ```bash
-make build           # Build optimized binary (output: build-app)
+curl -X POST http://localhost:5050/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email": "user@example.com", "password": "your-password"}'
 ```
 
-## 🐳 Docker Deployment
+**Register example:**
 
-### Build Docker Image
 ```bash
-docker build -t build-app . && docker image prune -f
+curl -X POST http://localhost:5050/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"name": "John Doe", "email": "john@example.com", "password": "secure-password"}'
 ```
 
-### Run Docker Container
+**Access protected endpoint:**
+
 ```bash
+curl http://localhost:5050/auth/me \
+  -H "Authorization: Bearer <your-jwt-token>"
+```
+
+## 🐳 Docker
+
+### Docker Compose (Recommended)
+
+The included `docker-compose.yml` sets up the complete development environment:
+
+| Service | Description | Port |
+|---------|-------------|------|
+| `app` | Go API application | `5050` |
+| `mysql` | MySQL 8.0 database | `3306` |
+| `redis` | Redis 7 cache | `6379` |
+
+```bash
+# Start all services
+docker compose up -d
+
+# View logs
+docker compose logs -f app
+
+# Rebuild after code changes
+docker compose up -d --build app
+
+# Stop all services
+docker compose down
+```
+
+### Standalone Docker
+
+Build and run the Docker image directly:
+
+```bash
+# Build
+docker build -t build-app .
+
+# Run with env file
 docker run -p 5050:5050 --env-file .env -d build-app
-```
 
-Or pass environment variables directly:
-```bash
+# Run with inline env vars
 docker run -p 5050:5050 \
-  -e DB_HOST=localhost \
-  -e DB_PORT=3306 \
+  -e DB_URL="mysql://user:password@host:3306/dbname" \
+  -e GO_ENV=production \
   -d build-app
 ```
 
-For more options, see [Docker environment variables documentation](https://docs.docker.com/engine/reference/commandline/run/#set-environment-variables--e---env---env-file).
+## ⚙️ Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `PORT` | Server port | `5050` |
+| `GO_ENV` | Environment (`production` or `development`) | — |
+| `TIMEOUT` | Request timeout in seconds | `5` |
+| **Logging** | | |
+| `LOG_TO_STDOUT` | Log to standard output | `true` |
+| `LOG_TO_FILE` | Log to file | `false` |
+| `LOG_FILENAME` | Log file path | `server.log` |
+| `LOG_MAX_SIZE` | Max log file size in MB | `50` |
+| **Database** | | |
+| `DB_URL` | Database connection URL | — |
+| **Redis** | | |
+| `USE_REDIS` | Enable Redis caching | `false` |
+| `REDIS_URL` | Redis connection URL | `redis://localhost:6379/0` |
+| `REDIS_TTL` | Cache TTL | `60s` |
+| `REDIS_KEY_PREFIX` | Cache key prefix | `app:` |
+| **JWT** | | |
+| `JWT_MEMBER_SECRET_KEY` | JWT signing secret | — |
+| `JWT_MEMBER_TTL` | Token TTL in minutes | `60` |
+| **AWS S3** | | |
+| `S3_ENDPOINT` | S3 endpoint URL | `https://s3.amazonaws.com` |
+| `S3_REGION` | S3 region | `auto` |
+| `S3_ACCESS_KEY` | S3 access key | — |
+| `S3_SECRET_KEY` | S3 secret key | — |
+| `S3_BUCKET_NAME` | S3 bucket name | — |
+| `S3_PUBLIC_URL` | Public URL for S3 assets | — |
 
 ## 📖 Usage Guide
 
 ### Adding a New Module
 
-1. **Define domain entity** in `domain/`
-2. **Create storage interface** in your module directory
-3. **Implement repository** in `internal/repository/`
-4. **Add business logic** in service layer
-5. **Create REST handlers** in `internal/rest/`
-6. **Register routes** in your router configuration
+Follow the Clean Architecture pattern to add new modules:
 
-### Example module structure (User):
+1. **Define the domain entity** in `domain/` — create the struct and repository interface
+2. **Create the service** in a new module directory — implement business logic
+3. **Implement the repository** in `internal/repository/` — data access layer
+4. **Create REST handlers** in `internal/rest/` — HTTP transport layer
+5. **Wire it up** in `app/main.go` — dependency injection
+
+**Example: Adding an "Order" module**
+
 ```
-user/
-├── service.go    # Business logic and use cases
-├── storage.go    # Storage interface definition
-└── cache.go      # Caching layer
+domain/order.go              # Order entity + OrderRepository interface
+order/service.go             # Order business logic
+order/storage.go             # Storage interface
+internal/repository/gorm/order.go   # GORM implementation
+internal/rest/order.go       # REST handlers
 ```
 
-## 🔒 Authentication
+### Switching Databases
 
-JWT authentication is built-in. Use the `auth` middleware to protect your routes:
+To switch the SQL database driver, edit `app/main.go` and uncomment the desired connection:
 
 ```go
-router.Use(middleware.Auth())
+gormDB, err := gorm.Open(
+    // connection.NewMysqlGORM(timeoutContext, os.Getenv("DB_URL")),       // MySQL
+    // connection.NewPostgresGORM(timeoutContext, os.Getenv("DB_URL")),    // PostgreSQL
+    // connection.NewSQLiteGORM(timeoutContext, os.Getenv("DB_URL")),     // SQLite
+    // connection.NewSQLServerGORM(timeoutContext, os.Getenv("DB_URL")),  // SQL Server
+    &gorm.Config{},
+)
 ```
 
-Token generation utilities are available in `helpers/jsonwebtoken/`.
+### Using Redis Caching Middleware
 
-## 🗄️ Database Support
+Apply the cache middleware to any route:
 
-This boilerplate supports multiple databases simultaneously:
+```go
+router.GET("/data", mdl.Cache(), handler.GetData)
+```
 
-- **SQL databases** via GORM (MySQL, PostgreSQL, SQLite)
-- **NoSQL** via MongoDB driver
-- **Caching** via Redis
+### Using JWT Authentication Middleware
 
-Connection helpers are in `helpers/connection/`.
+Protect routes with the auth middleware:
+
+```go
+router.GET("/profile", mdl.Auth(), handler.GetProfile)
+```
+
+## 🧪 Testing
+
+Run the test suite:
+
+```bash
+# Run all tests
+make test
+
+# Run tests with coverage report
+make testcoverage
+
+# Run specific package tests
+go test -v ./user/...
+go test -v ./internal/rest/...
+```
 
 ## 📝 License
 
-MIT License
-
-Copyright (c) 2025 Fahrur Rifai
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+This project is licensed under the [MIT License](LICENSE).
 
 ## 🤝 Contributing
 
-Contributions, issues, and feature requests are welcome!
+Contributions, issues, and feature requests are welcome! Feel free to open a pull request or submit an issue.
 
 ## 📧 Contact
 
-You can reach me at [mfahrurrifai@gmail.com](mailto:mfahrurrifai@gmail.com).
+Fahrur Rifai — [mfahrurrifai@gmail.com](mailto:mfahrurrifai@gmail.com)
 
 ---
 
