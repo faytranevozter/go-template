@@ -8,21 +8,21 @@
 
 ## Table of Contents
 
-- [Overview](#-overview)
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Architecture](#-architecture)
-- [Project Structure](#-project-structure)
-- [Getting Started](#-getting-started)
-- [Available Commands](#-available-commands)
-- [Docker](#-docker)
-- [Usage Guide](#-usage-guide)
-- [Authentication](#-authentication)
-- [Database Support](#-database-support)
-- [Environment Variables](#-environment-variables)
-- [Contributing](#-contributing)
-- [License](#-license)
-- [Contact](#-contact)
+- [Overview](#overview)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Architecture](#architecture)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Available Commands](#available-commands)
+- [Docker](#docker)
+- [Usage Guide](#usage-guide)
+- [Authentication](#authentication)
+- [Database Support](#database-support)
+- [Environment Variables](#environment-variables)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
 
 ## 🎯 Overview
 
